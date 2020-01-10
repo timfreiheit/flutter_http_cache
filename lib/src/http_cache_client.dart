@@ -23,8 +23,7 @@ class HttpCacheClient extends BaseClient {
 
     final cacheKey = _createCacheKey(request);
 
-    final cacheMetaData =
-    await _diskCache.getCacheMetaData(cacheKey);
+    final cacheMetaData = await _diskCache.getCacheMetaData(cacheKey);
     if (cacheMetaData?.isValid(DateTime.now(), clientCacheControl) == true) {
       return StreamedResponse(
         await _diskCache.getCachedStream(cacheKey),
@@ -50,7 +49,7 @@ class HttpCacheClient extends BaseClient {
       );
     }
 
-    if (response.statusCode != 200) {
+    if (response.statusCode < 200 || response.statusCode >= 300) {
       // only cache when response is valid
       return response;
     }
@@ -61,14 +60,14 @@ class HttpCacheClient extends BaseClient {
     }
     await _diskCache.save(cacheKey, response);
     return StreamedResponse(
-        await _diskCache.getCachedStream(cacheKey),
-        200,
-        headers: response.headers,
-        request: request,
-        isRedirect: response.isRedirect,
-        contentLength: response.contentLength,
-        reasonPhrase: response.reasonPhrase,
-        persistentConnection: response.persistentConnection
+      await _diskCache.getCachedStream(cacheKey),
+      200,
+      headers: response.headers,
+      request: request,
+      isRedirect: response.isRedirect,
+      contentLength: response.contentLength,
+      reasonPhrase: response.reasonPhrase,
+      persistentConnection: response.persistentConnection,
     );
   }
 

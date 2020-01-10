@@ -12,7 +12,7 @@ class CacheMetaData {
     this.timestamp,
     this.eTag,
     this.maxAge,
-    this.headers
+    this.headers,
   });
 
   factory CacheMetaData.fromResponse(BaseResponse response) {
@@ -21,16 +21,16 @@ class CacheMetaData {
       timestamp: DateTime.now(),
       headers: response.headers,
       eTag: serverCacheControl.eTag,
-      maxAge: serverCacheControl.maxAge
+      maxAge: serverCacheControl.maxAge,
     );
   }
 
   factory CacheMetaData.fromMap(Map map) {
     return CacheMetaData(
-        timestamp: DateTime.parse(map['timestamp']),
-        headers: (map['headers'] as Map).cast<String, String>(),
-        eTag: map['eTag'],
-        maxAge: Duration(milliseconds: map['maxAge'])
+      timestamp: DateTime.parse(map['timestamp']),
+      headers: (map['headers'] as Map).cast<String, String>(),
+      eTag: map['eTag'],
+      maxAge: Duration(milliseconds: map['maxAge']),
     );
   }
 
@@ -47,8 +47,12 @@ class CacheMetaData {
     if (clientCacheControl.noCache) {
       return false;
     }
+    if (clientCacheControl.onlyIfCached) {
+      return true;
+    }
     if (clientCacheControl.maxStale != null) {
-      return now.difference(timestamp).inMilliseconds < clientCacheControl.maxStale.inMilliseconds;
+      return now.difference(timestamp).inMilliseconds <
+          clientCacheControl.maxStale.inMilliseconds;
     }
     if (maxAge != null) {
       return now.difference(timestamp).inMilliseconds < maxAge.inMilliseconds;

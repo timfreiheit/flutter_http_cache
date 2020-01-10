@@ -28,9 +28,10 @@ class DiskCache {
       lruCacheDir.createSync(recursive: true);
     }
     _lruCache = DiskLruCache(
-        directory: lruCacheDir,
-        maxSize: maxSize,
-        filesCount: 1);
+      directory: lruCacheDir,
+      maxSize: maxSize,
+      filesCount: 1,
+    );
   }
 
   Future<CacheMetaData> getCacheMetaData(String key) async {
@@ -64,7 +65,7 @@ class DiskCache {
       await ByteStream(stream).toBytes();
       await editor.commit();
 
-      assert (getCacheMetaData(key) != null);
+      assert(getCacheMetaData(key) != null);
 
       _metaData[key] = metaData;
     });

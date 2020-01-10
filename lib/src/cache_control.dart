@@ -47,8 +47,8 @@ class ClientCacheControl {
   final Duration maxStale;
 
   ClientCacheControl({
-    this.onlyIfCached,
-    this.noCache,
+    this.onlyIfCached = false,
+    this.noCache = false,
     this.maxStale,
   });
 
