@@ -10,7 +10,7 @@ class ServerCacheControl {
   ServerCacheControl({
     this.eTag,
     this.maxAge,
-    this.noStore,
+    this.noStore = false,
   });
 
   factory ServerCacheControl.fromResponse(BaseResponse response) {
