@@ -61,7 +61,7 @@ class HttpCacheClient extends BaseClient {
     await _diskCache.save(cacheKey, response);
     return StreamedResponse(
       await _diskCache.getCachedStream(cacheKey),
-      200,
+      response.statusCode,
       headers: response.headers,
       request: request,
       isRedirect: response.isRedirect,
