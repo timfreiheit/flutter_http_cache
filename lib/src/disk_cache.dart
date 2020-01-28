@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:crypto/crypto.dart';
 
 import 'package:disk_lru_cache/disk_lru_cache.dart';
 import 'package:http/http.dart';
@@ -44,6 +45,7 @@ class DiskCache {
   }
 
   Future<Stream<List<int>>> getCachedStream(String key) async {
+    await _loadMetaDataSync();
     final cacheEntry = await _lruCache.get(key);
     if (cacheEntry == null) {
       throw NullThrownError();
@@ -56,6 +58,7 @@ class DiskCache {
   }
 
   Future<Null> save(String key, StreamedResponse response) async {
+    await _loadMetaDataSync();
     await _lock.synchronized(() async {
       final metaData = CacheMetaData.fromResponse(response);
       final editor = await _lruCache.edit(key);
@@ -105,4 +108,8 @@ class DiskCache {
       });
     });
   }
+}
+
+String createCacheKey(Uri uri) {
+  return md5.convert(uri.toString().codeUnits).toString();
 }

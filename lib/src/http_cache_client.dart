@@ -1,4 +1,3 @@
-import 'package:crypto/crypto.dart';
 import 'package:http/http.dart';
 import 'package:http_cache_client/src/cache_control.dart';
 import 'package:http_cache_client/src/disk_cache.dart';
@@ -21,7 +20,7 @@ class HttpCacheClient extends BaseClient {
       return await _inner.send(request);
     }
 
-    final cacheKey = _createCacheKey(request);
+    final cacheKey = createCacheKey(request.url);
 
     final cacheMetaData = await _diskCache.getCacheMetaData(cacheKey);
     if (cacheMetaData?.isValid(DateTime.now(), clientCacheControl) == true) {
@@ -69,9 +68,5 @@ class HttpCacheClient extends BaseClient {
       reasonPhrase: response.reasonPhrase,
       persistentConnection: response.persistentConnection,
     );
-  }
-
-  String _createCacheKey(Request request) {
-    return md5.convert(request.url.toString().codeUnits).toString();
   }
 }

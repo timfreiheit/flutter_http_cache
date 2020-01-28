@@ -14,10 +14,14 @@ class ServerCacheControl {
   });
 
   factory ServerCacheControl.fromResponse(BaseResponse response) {
+      return ServerCacheControl.fromResponseHeaders(response.headers);
+  }
+
+  factory ServerCacheControl.fromResponseHeaders(Map<String, String> headers) {
     String eTag;
     String cacheControlHeader;
 
-    response.headers.forEach((key, value) {
+    headers.forEach((key, value) {
       switch (key.toLowerCase()) {
         case 'etag':
           eTag = value;
@@ -53,9 +57,13 @@ class ClientCacheControl {
   });
 
   factory ClientCacheControl.fromRequest(Request request) {
+      return ClientCacheControl.fromRequestHeaders(request.headers);
+  }
+
+  factory ClientCacheControl.fromRequestHeaders(Map<String, String> headers) {
     String cacheControlHeader;
 
-    request.headers.forEach((key, value) {
+    headers.forEach((key, value) {
       switch (key.toLowerCase()) {
         case 'cache-control':
           cacheControlHeader = value;
