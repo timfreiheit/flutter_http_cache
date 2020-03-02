@@ -57,7 +57,7 @@ class DiskCache {
     return stream;
   }
 
-  Future<Null> save(String key, StreamedResponse response) async {
+  Future<void> save(String key, StreamedResponse response) async {
     await _loadMetaDataSync();
     await _lock.synchronized(() async {
       final metaData = CacheMetaData.fromResponse(response);
@@ -75,7 +75,7 @@ class DiskCache {
     await _saveMetaData();
   }
 
-  Future<Null> _saveMetaData() {
+  Future<void> _saveMetaData() {
     return _lock.synchronized(() {
       final data = {};
       _metaData.forEach((key, value) {
@@ -88,7 +88,7 @@ class DiskCache {
     });
   }
 
-  Future<Null> _loadMetaDataSync() async {
+  Future<void> _loadMetaDataSync() async {
     if (_metaData != null) {
       return;
     }
@@ -107,6 +107,15 @@ class DiskCache {
         }
       });
     });
+  }
+
+  Future<void> clear() async {
+    await _loadMetaDataSync();
+    await _lock.synchronized(() async {
+      await _lruCache.clean();
+      _metaData.clear();
+    });
+    await _saveMetaData();
   }
 }
 
